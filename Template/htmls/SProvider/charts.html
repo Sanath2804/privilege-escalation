@@ -1,0 +1,95 @@
+{% extends 'SProvider/design1.html' %}
+{% block researchblock %}
+
+<style>
+    body {
+        background-color: #f4f4f4;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 20px auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .chart-header {
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .menu {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .menu a {
+        display: inline-block;
+        margin: 10px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+
+    .menu a:hover {
+        background-color: #0056b3;
+    }
+
+    #chartContainer {
+    width: 90%;
+    max-width: 1020px;
+  
+}
+
+</style>
+
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+<script>
+window.onload = function() {
+    var chart = new CanvasJS.Chart("chartContainer", {
+        animationEnabled: true,
+        title: {
+            text: "Escalation Attack Detection Analysis"
+        },
+        data: [{
+            type: "{{ chart_type }}",
+            startAngle: 240,
+            yValueFormatString: "##0.00\"%\"",
+            indexLabel: "{label} {y}",
+            dataPoints: [
+                {% for o in form %}
+                    { y: {{ o.dcount }}, label: "{{ o.names }}" },
+                {% endfor %}
+            ]
+        }]
+    });
+    chart.render();
+}
+</script>
+
+<body>
+
+<div class="container">
+    <div class="chart-header">Attack Detection Chart</div>
+
+    <div class="menu">
+        <a href="{% url 'charts' 'pie' %}">Pie Chart</a>
+        <a href="{% url 'charts' 'line' %}">Line Chart</a>
+        <a href="{% url 'charts' 'spline' %}">Spline Chart</a>
+    </div>
+
+    <div id="chartContainer"></div>
+</div>
+
+</body>
+{% endblock %}

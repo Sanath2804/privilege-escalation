@@ -1,0 +1,132 @@
+{% extends 'SProvider/design1.html' %}
+{% load static %}
+
+{% block researchblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic Charts</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #FFFFFF;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .topic h1 {
+            color: black;
+            padding: 15px;
+            text-align: center;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 24px;
+        }
+
+        /* Sidebar Menu */
+        .sidemenu {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sidemenu a {
+            display: block;
+            margin: 10px auto;
+            padding: 12px;
+            width: 200px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .sidemenu a:hover {
+            background: #0056b3;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            width: 90%;
+            max-width: 1180px;
+            margin: auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                width: 100%;
+                padding: 15px;
+            }
+
+            .sidemenu a {
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="topic">
+            <h1>Interactive Data Charts</h1>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <div class="sidemenu">
+            <a href="{% url 'charts1' 'pie' %}">Pie Chart</a>
+            <a href="{% url 'charts1' 'line' %}">Line Chart</a>
+            <a href="{% url 'charts1' 'spline' %}">Spline Chart</a>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="chart-container">
+            <div id="chartContainer"></div>
+        </div>
+
+        <!-- Include CanvasJS -->
+        <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+        <script>
+            window.onload = function() {
+                var chart = new CanvasJS.Chart("chartContainer", {
+                    animationEnabled: true,
+                    title: {
+                        text: "Data Visualization"
+                    },
+                    data: [{
+                        {% if chart_type == "line" %}
+                            type: "line",
+                        {% elif chart_type == "pie" %}
+                            type: "pie",
+                        {% elif chart_type == "spline" %}
+                            type: "spline",
+                        {% endif %}
+                        startAngle: 240,
+                        yValueFormatString: "##0.00\"%\"",
+                        indexLabel: "{label} {y}",
+                        dataPoints: [
+                            {% for o in form %}
+                                { y: {{ o.dcount }}, label: "{{ o.names }}" },
+                            {% endfor %}
+                        ]
+                    }]
+                });
+                chart.render();
+            }
+        </script>
+    </div>
+</body>
+</html>
+{% endblock %}
